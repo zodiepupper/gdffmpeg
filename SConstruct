@@ -5,7 +5,7 @@ import sys
 from methods import print_error
 
 
-libname = "EXTENSION-NAME"
+libname = "gdffmpeg"
 projectdir = "demo"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
@@ -16,7 +16,7 @@ localEnv = Environment(tools=["default"], PLATFORM="")
 # Modify the example file as needed and uncomment the line below or
 # manually specify the build_profile parameter when running SCons.
 
-# localEnv["build_profile"] = "build_profile.json"
+localEnv["build_profile"] = "build_profile.json"
 
 customs = ["custom.py"]
 customs = [os.path.abspath(path) for path in customs]
@@ -29,16 +29,23 @@ Help(opts.GenerateHelpText(localEnv))
 env = localEnv.Clone()
 
 if not (os.path.isdir("godot-cpp") and os.listdir("godot-cpp")):
-    print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
+    print_error("""godot-cpp or ffmpeg is not available within this folder, as Git submodules haven't been initialized.
 Run the following command to download godot-cpp:
 
     git submodule update --init --recursive""")
     sys.exit(1)
 
+env.Command # use env.Command https://www.scons.org/doc/2.0.1/HTML/scons-user.html#chap-builders-commands
+
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-env.Append(CPPPATH=["src/"])
+env.Append(CPPPATH=["src/","src/ffmpeg/"])
+#env.Append(CPATH=["src/","src/ffmpeg/","src/ffmpeg/libavutil/"])
+#env.Append(CPPPATH=["ffmpeg/"])
 sources = Glob("src/*.cpp")
+#sources.append(Glob("ffmpeg/libavcodec/*.h"))
+#sources.append(Glob("ffmpeg/libavformat/*.h"))
+#sources.append(Glob("ffmpeg/libavutil/*.h"))
 
 if env["target"] in ["editor", "template_debug"]:
     try:

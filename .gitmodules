@@ -3,5 +3,5 @@
 	url = https://github.com/godotengine/godot-cpp.git
 	branch = 4.3
 [submodule "ffmpeg"]
-	path = ffmpeg
+	path = src/ffmpeg
 	url = https://git.ffmpeg.org/ffmpeg.git

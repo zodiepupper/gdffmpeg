@@ -40,12 +40,7 @@ env.Command # use env.Command https://www.scons.org/doc/2.0.1/HTML/scons-user.ht
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 env.Append(CPPPATH=["src/","src/ffmpeg/"])
-#env.Append(CPATH=["src/","src/ffmpeg/","src/ffmpeg/libavutil/"])
-#env.Append(CPPPATH=["ffmpeg/"])
 sources = Glob("src/*.cpp")
-#sources.append(Glob("ffmpeg/libavcodec/*.h"))
-#sources.append(Glob("ffmpeg/libavformat/*.h"))
-#sources.append(Glob("ffmpeg/libavutil/*.h"))
 
 if env["target"] in ["editor", "template_debug"]:
     try:

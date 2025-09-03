@@ -3,19 +3,18 @@
 #include "godot_cpp/classes/ref_counted.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "godot_cpp/variant/variant.hpp"
-#include <ffmpeg/libavcodec/avcodec.h>
 
 using namespace godot;
 // awwooo
-class ExampleClass : public RefCounted {
-	GDCLASS(ExampleClass, RefCounted)
+class FFmpegTexture2D : public RefCounted {
+	GDCLASS(FFmpegTexture2D, RefCounted)
 
 protected:
 	static void _bind_methods();
 
 public:
-	ExampleClass() = default;
-	~ExampleClass() override = default;
+	FFmpegTexture2D() = default;
+	~FFmpegTexture2D() override = default;
 
 	void print_type(const Variant &p_variant) const;
 };

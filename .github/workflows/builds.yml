@@ -64,6 +64,12 @@ jobs:
           platform: ${{ matrix.target.platform }}
           em-version: 3.1.62
 
+      # configure and bulid ffmpeg
+      - name: Build FFmpeg
+        shell: sh
+        run: |
+          cd src/ffmpeg && ./configure --enable-pic --extra-ldexeflags=-pie && make
+
       # Build GDExtension (with caches)
 
       - name: Restore .scons_cache

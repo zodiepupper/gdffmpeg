@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 import os
 import sys
+import subprocess
 
 from methods import print_error
 
 
 libname = "gdffmpeg"
 projectdir = "demo"
+
+# TODO later on figure out how we can have scons run
+# the build for ffmpeg automatically to simplify the
+# build process
+#subprocess.Popen("src/ffmpeg/configure", shell=True)
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 
@@ -39,8 +45,32 @@ env.Command # use env.Command https://www.scons.org/doc/2.0.1/HTML/scons-user.ht
 
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-env.Append(CPPPATH=["src/","src/ffmpeg/"])
+# setup paths for source files and the cpp root path
+env.Append(CPPPATH=["src/",
+                    "src/ffmpeg/"])
+
 sources = Glob("src/*.cpp")
+
+# setup paths for where to get the static library files from ffmpeg
+env.Append(LIBPATH=["src/ffmpeg/libavutil/",
+                    "src/ffmpeg/libavdevice/",
+                    "src/ffmpeg/libavcodec/",
+                    "src/ffmpeg/libavformat/",
+                    "src/ffmpeg/libavfilter",
+                    "src/ffmpeg/libswresample/",
+                    "src/ffmpeg/libswscale/"])
+
+# tell scons what libraries we want it to statically link
+env.Append(LIBS=["libavcodec",
+                 "libavdevice",
+                 "libavfilter",
+                 "libavformat",
+                 "libavutil",
+                 "libswresample",
+                 "libswscale"])
+
+# these are linker flags (also referred to as LDFLAGS in many cases online)
+env.Append(LINKFLAGS=["-Wl,-Bsymbolic"])
 
 if env["target"] in ["editor", "template_debug"]:
     try:

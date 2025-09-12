@@ -5,7 +5,7 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "ffmpeg_texture2D.h"
+#include "gdffmpeg.h"
 
 using namespace godot;
 
@@ -14,7 +14,8 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	GDREGISTER_CLASS(FFmpegTexture2D);
+	GDREGISTER_CLASS(FFmpeg);
+	GDREGISTER_CLASS(FFmpegTexture);
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {

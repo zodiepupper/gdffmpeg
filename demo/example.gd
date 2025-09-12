@@ -1,5 +1,7 @@
-extends Node
+extends TextureRect
+
+var fftex := FFmpegTexture.new()
+var ffmpeg := FFmpeg.new()
 
 func _ready() -> void:
-	var example := FFmpegTexture2D.new()
-	example.print_type(example)
+	pass

@@ -27,43 +27,10 @@ extern "C" {
 
 using namespace godot;
 
-// this is a simplified helper utility for end users
-// to shove a thing to be decoded into and get an
-// AudioStream and a Textuere out of it, so they can
-// easily bypass the complexity of using ffmpeg
-
-class FFmpegTexture : public Texture2D {
-	GDCLASS(FFmpegTexture, Texture2D)
-
-protected:
-	static void _bind_methods();
-
-public:
-	FFmpegTexture() = default;
-	~FFmpegTexture() override = default;
-	const AVCodec *codec;
-	bool exists();
-	bool decode_from_bytes(PackedByteArray bytes);
-};
-
-// the root class that provides access to constants and variables
-// relevant to using FFmpeg in godot
-
-class FFmpeg : public Object {
-	GDCLASS(FFmpeg, Object)
-
-	protected:
-		static void _bind_methods();
-
-	public:
-		FFmpeg() = default;
-		~FFmpeg() override = default;
-};
-
 // wrapper class for accessing AVCodec functionality from within godot
 
-class GDAVCodec : public RefCounted {
-	GDCLASS(GDAVCodec, RefCounted)
+class GDAVCodec : public Ref<T> {
+	GDCLASS(GDAVCodec, Ref<T>)
 
 	protected:
 		static void _bind_methods();
@@ -108,3 +75,63 @@ class GDAVFrame : public RefCounted {
 		AVFrame *avframe;
 
 };
+
+// wrapper class for AVCodecContext
+
+class GDAVCodecContext : public RefCounted {
+	GDCLASS(GDAVCodecContext, RefCounted)
+
+	protected:
+		static void _bind_methods();
+
+	public:
+		//GDAVCodecContext();
+		~GDAVCodecContext() override = default;
+
+		AVCodecContext *codec_context = new AVCodecContext;
+};
+
+class GDAVPacket : public RefCounted {
+	GDCLASS(GDAVPacket, RefCounted)
+
+	protected:
+		static void _bind_methods();
+
+	public:
+		AVPacket *avpacket = new AVPacket;
+};
+
+// this is a simplified helper utility for end users
+// to shove a thing to be decoded into and get an
+// AudioStream and a Textuere out of it, so they can
+// easily bypass the complexity of using ffmpeg
+
+class FFmpegTexture : public Texture2D {
+	GDCLASS(FFmpegTexture, Texture2D)
+
+protected:
+	static void _bind_methods();
+
+public:
+	FFmpegTexture() = default;
+	~FFmpegTexture() override = default;
+	const AVCodec *codec;
+	bool exists();
+	bool decode_from_bytes(PackedByteArray bytes);
+	void decode_mp4(GDAVCodecContext dec_ctx, GDAVFrame frame, GDAVPacket pkt, String filename);
+};
+
+// the root class that provides access to constants and variables
+// relevant to using FFmpeg in godot
+
+class FFmpeg : public Object {
+	GDCLASS(FFmpeg, Object)
+
+	protected:
+		static void _bind_methods();
+
+	public:
+		FFmpeg() = default;
+		~FFmpeg() override = default;
+};
+

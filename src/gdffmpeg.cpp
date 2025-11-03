@@ -2,35 +2,34 @@
 
 using namespace godot;
 
+void GDAVCodecContext::_bind_methods() {
+	return;
+}
+
 void FFmpegTexture::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("exists"), &FFmpegTexture::exists);
+	godot::ClassDB::bind_method(D_METHOD("decode_mp4", "dec_ctx", "frame", "pkt", "filename"), &FFmpegTexture::decode_mp4);
 }
 
 bool FFmpegTexture::exists() {
 	return true;
 }
 
-bool decode_from_bytes(PackedByteArray bytes) {
-	return true;
-}
+#define INBUF_SIZE 4096
 
-void FFmpeg::_bind_methods() {
-	return;
-}
-
-static void _decode(AVCodecContext *dec_ctx, AVFrame *frame, AVPacket *pkt, const char *filename)
+void FFmpegTexture::decode_mp4(GDAVCodecContext dec_ctx, GDAVFrame frame, GDAVPacket pkt, String filename)
 {
     char buf[1024];
     int av_send_packet;
 
-    av_send_packet = avcodec_send_packet(dec_ctx, pkt);
+    av_send_packet = avcodec_send_packet(dec_ctx.codec_context, pkt.avpacket);
     if (av_send_packet < 0) {
         fprintf(stderr, "Error sending a packet for decoding\n");
         exit(1);
     }
 
     while (av_send_packet >= 0) {
-        av_send_packet = avcodec_receive_frame(dec_ctx, frame);
+        av_send_packet = avcodec_receive_frame(dec_ctx.codec_context, frame.avframe);
         if (av_send_packet == AVERROR(EAGAIN) || av_send_packet == AVERROR_EOF)
             return;
         else if (av_send_packet < 0) {
@@ -38,18 +37,24 @@ static void _decode(AVCodecContext *dec_ctx, AVFrame *frame, AVPacket *pkt, cons
             exit(1);
         }
 
-        //printf("saving frame %3"PRId64"\n", dec_ctx->frame_num);
+        //printf("saving frame.avframe %3"PRId64"\n", dec_ctx.codec_context->frame_num);
         fflush(stdout);
 
         /* the picture is allocated by the decoder. no need to
            free it */
-        //snprintf(buf, sizeof(buf), "%s-%"PRId64, filename, dec_ctx->frame_num);
-        //pgm_save(frame->data[0], frame->linesize[0],
-                 //frame->width, frame->height, buf);
+        //snprintf(buf, sizeof(buf), "%s-%"PRId64, filename, dec_ctx.codec_context->frame_num);
+        //pgm_save(frame.avframe->data[0], frame.avframe->linesize[0],
+                 //frame.avframe->width, frame.avframe->height, buf);
     }
 }
 
-#define INBUF_SIZE 4096
+void FFmpeg::_bind_methods() {
+	return;
+}
+
+bool decode_from_bytes(PackedByteArray bytes) {
+	return true;
+}
 
 int main(int argc, char **argv)
 {
@@ -141,15 +146,15 @@ int main(int argc, char **argv)
             data      += av_send_packet;
             data_size -= av_send_packet;
 
-            if (pkt->size)
-                _decode(avcodec_context3, frame, pkt, outfilename);
-            else if (eof)
-                break;
+            //if (pkt->size)
+                //FFmpegTexture::static_decode_mp4(avcodec_context3, frame, pkt, outfilename);
+            //else if (eof)
+            //    break;
         }
     } while (!eof);
 
     /* flush the decoder */
-    _decode(avcodec_context3, frame, NULL, outfilename);
+    //FFmpegTexture::static_decode_mp4(avcodec_context3, frame, NULL, outfilename);
 
     fclose(file);
 

@@ -14,6 +14,9 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+	GDREGISTER_CLASS(GDAVCodecContext);
+	GDREGISTER_CLASS(GDAVFrame);
+	GDREGISTER_CLASS(GDAVPacket);
 	GDREGISTER_CLASS(FFmpeg);
 	GDREGISTER_CLASS(FFmpegTexture);
 }
